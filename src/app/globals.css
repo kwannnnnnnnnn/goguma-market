@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/*
+  🍠 고구마마켓 디자인 테마
+  - skin   : 자색 고구마 껍질 (보라)
+  - flesh  : 노란 고구마 속살 (주황/호박)
+  - leaf   : 고구마 줄기 잎 (초록)
+  - cream  : 따뜻한 배경
+*/
+:root {
+  --background: #fff7ec;
+  --foreground: #3a2a32;
+
+  --goguma-skin: #7a3f6d;
+  --goguma-skin-dark: #5e2f54;
+  --goguma-flesh: #f2a93b;
+  --goguma-flesh-dark: #e08a1e;
+  --goguma-leaf: #6aa84f;
+  --goguma-cream: #fff7ec;
+  --goguma-card: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-skin: var(--goguma-skin);
+  --color-skin-dark: var(--goguma-skin-dark);
+  --color-flesh: var(--goguma-flesh);
+  --color-flesh-dark: var(--goguma-flesh-dark);
+  --color-leaf: var(--goguma-leaf);
+  --color-cream: var(--goguma-cream);
+  --color-card: var(--goguma-card);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
