@@ -28,6 +28,12 @@ export async function Header() {
         </Link>
 
         <nav className="flex items-center gap-3 text-sm">
+          <Link
+            href="/products"
+            className="rounded-lg px-3 py-1.5 font-medium text-skin-dark transition hover:bg-skin/5"
+          >
+            판매글
+          </Link>
           {user ? (
             <>
               <span className="text-foreground/70">

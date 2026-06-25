@@ -19,10 +19,19 @@ export default async function Home() {
       </p>
 
       {user ? (
-        <div className="mt-8 rounded-2xl bg-card px-6 py-5 shadow-sm">
-          <p className="text-foreground/70">
-            로그인 완료! 🎉 곧 물건을 사고팔 수 있는 기능이 추가될 예정이에요.
-          </p>
+        <div className="mt-8 flex gap-3">
+          <Link
+            href="/products"
+            className="rounded-xl bg-skin px-6 py-3 font-semibold text-white transition hover:bg-skin-dark"
+          >
+            판매글 둘러보기
+          </Link>
+          <Link
+            href="/products/new"
+            className="rounded-xl border border-skin/20 px-6 py-3 font-semibold text-skin-dark transition hover:bg-skin/5"
+          >
+            판매글 쓰기
+          </Link>
         </div>
       ) : (
         <div className="mt-8 flex gap-3">
