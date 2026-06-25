@@ -20,3 +20,15 @@ export function isProductStatus(value: string): value is ProductStatus {
 export function formatPrice(price: number): string {
   return `${price.toLocaleString("ko-KR")}원`;
 }
+
+// 판매글 하나에 올릴 수 있는 사진 최대 장수
+export const MAX_IMAGES = 5;
+
+// 사진을 보관하는 Storage 창고(bucket) 이름
+export const PRODUCT_IMAGES_BUCKET = "product-images";
+
+// 창고 안 경로(예: "유저id/사진id.jpg") -> 브라우저에서 볼 수 있는 공개 주소
+export function productImageUrl(path: string): string {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return `${base}/storage/v1/object/public/${PRODUCT_IMAGES_BUCKET}/${path}`;
+}

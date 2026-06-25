@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import Image from "next/image";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import type { ProductFormState } from "@/app/products/actions";
-import { PRODUCT_STATUS, type Product } from "@/lib/products";
+import {
+  MAX_IMAGES,
+  PRODUCT_STATUS,
+  productImageUrl,
+  type Product,
+} from "@/lib/products";
 
 type ProductAction = (
   prevState: ProductFormState,
@@ -39,6 +45,31 @@ export function ProductForm({
     action,
     {},
   );
+
+  // 기존 사진 중 "삭제"로 표시한 경로들
+  const existing = product?.image_paths ?? [];
+  const [removed, setRemoved] = useState<string[]>([]);
+  // 새로 고른 사진들의 미리보기
+  const [newPreviews, setNewPreviews] = useState<
+    { name: string; url: string }[]
+  >([]);
+
+  const keptCount = existing.length - removed.length;
+  const remaining = MAX_IMAGES - keptCount;
+
+  function toggleRemove(path: string) {
+    setRemoved((prev) =>
+      prev.includes(path) ? prev.filter((p) => p !== path) : [...prev, path],
+    );
+  }
+
+  function onFilesChange(e: React.ChangeEvent<HTMLInputElement>) {
+    newPreviews.forEach((p) => URL.revokeObjectURL(p.url));
+    const files = Array.from(e.target.files ?? []);
+    setNewPreviews(
+      files.map((f) => ({ name: f.name, url: URL.createObjectURL(f) })),
+    );
+  }
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
@@ -82,6 +113,78 @@ export function ProductForm({
           className="resize-y rounded-xl border border-skin/15 bg-cream px-4 py-3 text-foreground outline-none transition focus:border-flesh focus:ring-2 focus:ring-flesh/30"
         />
       </label>
+
+      {/* 사진 영역 */}
+      <div className="flex flex-col gap-2 text-sm">
+        <span className="font-medium text-foreground/80">
+          사진 <span className="text-foreground/40">(최대 {MAX_IMAGES}장)</span>
+        </span>
+
+        {/* 수정 화면: 기존 사진 목록 */}
+        {existing.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {existing.map((path) => {
+              const isRemoved = removed.includes(path);
+              return (
+                <div key={path} className="relative aspect-square">
+                  <Image
+                    src={productImageUrl(path)}
+                    alt="기존 사진"
+                    fill
+                    sizes="120px"
+                    className={`rounded-xl object-cover transition ${
+                      isRemoved ? "opacity-30 grayscale" : ""
+                    }`}
+                  />
+                  {/* 삭제로 표시된 사진만 서버에 알려줍니다. */}
+                  <input type="hidden" name="existing_images" value={path} />
+                  {isRemoved && (
+                    <input type="hidden" name="remove_images" value={path} />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => toggleRemove(path)}
+                    className="absolute right-1 top-1 rounded-md bg-black/55 px-1.5 py-0.5 text-xs font-medium text-white"
+                  >
+                    {isRemoved ? "되돌리기" : "삭제"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <input
+          name="images"
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={onFilesChange}
+          className="rounded-xl border border-dashed border-skin/30 bg-cream px-4 py-3 text-foreground/70 file:mr-3 file:rounded-lg file:border-0 file:bg-skin file:px-3 file:py-1.5 file:font-semibold file:text-white hover:file:bg-skin-dark"
+        />
+        <p className="text-xs text-foreground/50">
+          {product
+            ? `남은 자리 ${Math.max(remaining, 0)}장 · 새로 ${newPreviews.length}장 선택됨`
+            : `${newPreviews.length}/${MAX_IMAGES}장 선택됨`}
+        </p>
+
+        {/* 새로 고른 사진 미리보기 */}
+        {newPreviews.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {newPreviews.map((p) => (
+              <div key={p.url} className="relative aspect-square">
+                {/* 미리보기는 임시 주소라 일반 img 태그를 씁니다. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.url}
+                  alt={p.name}
+                  className="h-full w-full rounded-xl object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <label className="flex flex-col gap-1.5 text-sm">
         <span className="font-medium text-foreground/80">판매 상태</span>

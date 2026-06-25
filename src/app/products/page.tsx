@@ -1,6 +1,12 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
-import { formatPrice, PRODUCT_STATUS, isProductStatus } from "@/lib/products";
+import {
+  formatPrice,
+  PRODUCT_STATUS,
+  isProductStatus,
+  productImageUrl,
+} from "@/lib/products";
 
 export const metadata = { title: "판매글 · 고구마마켓" };
 
@@ -10,7 +16,7 @@ export default async function ProductsPage() {
   const [{ data: products }, { data: { user } }] = await Promise.all([
     supabase
       .from("products")
-      .select("id, title, price, status, created_at")
+      .select("id, title, price, status, created_at, image_paths")
       .order("created_at", { ascending: false }),
     supabase.auth.getUser(),
   ]);
@@ -44,9 +50,24 @@ export default async function ProductsPage() {
               <li key={product.id}>
                 <Link
                   href={`/products/${product.id}`}
-                  className="flex items-center justify-between gap-4 rounded-2xl bg-card px-5 py-4 shadow-sm transition hover:shadow-md"
+                  className="flex items-center gap-4 rounded-2xl bg-card px-5 py-4 shadow-sm transition hover:shadow-md"
                 >
-                  <div className="min-w-0">
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-skin/5">
+                    {product.image_paths.length > 0 ? (
+                      <Image
+                        src={productImageUrl(product.image_paths[0])}
+                        alt={product.title}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-full w-full items-center justify-center text-2xl">
+                        🍠
+                      </span>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold text-foreground">
                       {product.title}
                     </p>

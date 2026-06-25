@@ -1,8 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteProductButton } from "@/components/DeleteProductButton";
-import { formatPrice, PRODUCT_STATUS, isProductStatus } from "@/lib/products";
+import {
+  formatPrice,
+  PRODUCT_STATUS,
+  isProductStatus,
+  productImageUrl,
+} from "@/lib/products";
 
 export default async function ProductDetailPage({
   params,
@@ -49,6 +55,25 @@ export default async function ProductDetailPage({
       </Link>
 
       <article className="mt-4 rounded-3xl bg-card p-6 shadow-sm sm:p-8">
+        {product.image_paths.length > 0 && (
+          <div className="mb-6 flex flex-col gap-3">
+            {product.image_paths.map((path) => (
+              <div
+                key={path}
+                className="relative aspect-square w-full overflow-hidden rounded-2xl bg-skin/5"
+              >
+                <Image
+                  src={productImageUrl(path)}
+                  alt={product.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 576px"
+                  className="object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-2xl font-bold text-foreground">
             {product.title}

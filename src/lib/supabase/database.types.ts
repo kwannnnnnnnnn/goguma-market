@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          image_paths: string[]
           price: number
           seller_id: string
           status: string
@@ -29,6 +30,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          image_paths?: string[]
           price?: number
           seller_id: string
           status?: string
@@ -39,6 +41,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          image_paths?: string[]
           price?: number
           seller_id?: string
           status?: string
